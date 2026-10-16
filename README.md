@@ -1,38 +1,74 @@
-# hass-sonos-metadata-mux
+# Media Metadata Filler
 
-When a Sonos speaker plays a BBC Sounds live station (for example after
-"Alexa, play Radio 2 on BBC Sounds"), Sonos reports no title, artist or
-artwork, so Home Assistant's Sonos entity shows nothing. Other services
-(Amazon Music, Apple Music, TuneIn, Global Player) report metadata fine.
+A Home Assistant integration that fills in missing now-playing metadata
+(title, artist, album, artwork) on any `media_player`.
 
-The stream URI does name the BBC service (e.g. `bbc_radio_two`), and BBC's own
-now-playing API knows the current track, programme and artwork. This service:
+Some streams arrive at a player with no metadata at all. The motivating case:
+a Sonos speaker playing a **BBC Sounds** live station (for example after
+"Alexa, play Radio 2 on BBC Sounds") reports nothing but a playlist filename,
+so Home Assistant shows a blank player. Other services on the same speaker
+(Amazon Music, Apple Music, TuneIn, Global Player) report metadata fine. See
+[docs/sonos-stream-metadata.md](docs/sonos-stream-metadata.md) for what was
+measured.
 
-- watches and controls the Sonos speaker directly with [SoCo](https://github.com/SoCo/SoCo)
-- for BBC streams, fills in metadata from the BBC (track when music is playing,
-  otherwise the programme), and passes everything else through from the Sonos
-- publishes one `media_player` per speaker to Home Assistant over MQTT, using the
-  [mqtt_media_player](https://github.com/bkbilly/hass-mqtt-mediaplayer) HACS integration
+## How it works
 
-> Status: early development. The BBC endpoint (`rms.api.bbc.co.uk`) is the one
-> the BBC Sounds web app uses; it is unofficial and could change.
+For each media player you choose, the integration creates a new media player
+entity that:
 
-## Prerequisites
+- **mirrors** the original: state, volume, source, grouping, supported
+  features, and everything else
+- **forwards every command** (play, pause, volume, play media, browse, join…)
+  to the original, so control works exactly as before
+- **fills in metadata** when a source recognises the stream from its
+  `media_content_id`. Anything a source doesn't provide passes through.
 
-- Python 3.12+ and [uv](https://docs.astral.sh/uv/)
-- This machine on the same LAN as the Sonos speakers (they push UPnP events to it)
-- For Home Assistant: an MQTT broker (e.g. the Mosquitto add-on) and the
-  `mqtt_media_player` integration from HACS
+The new entity is attached to the same device as the original. You'll
+probably want to hide the original entity and use the filled one on
+dashboards.
 
-## Quick start (development)
+Extra attributes: `wrapped_entity_id`, and `filled_by` (the source key while
+metadata is being filled, otherwise `null`).
+
+## Sources
+
+| Source | Recognises | Fills |
+|---|---|---|
+| BBC Sounds (`bbc_sounds`) | BBC live stream URIs (`…/vpid/bbc_radio_two/…`, `…/bbc_radio_two.m3u8`) | Current track (artist, title, art) while music is playing; otherwise the programme title, station and programme image. Polled every 20 s. |
+
+The BBC data comes from `rms.api.bbc.co.uk`, the API the BBC Sounds web app
+uses. It is unofficial and could change.
+
+## Installation
+
+**HACS:** add this repository as a custom repository (category *Integration*),
+install **Media Metadata Filler**, and restart Home Assistant.
+
+**Manual:** copy `custom_components/media_metadata_filler` into your Home
+Assistant `config/custom_components/` folder and restart.
+
+Then go to **Settings → Devices & services → Add integration → Media Metadata
+Filler**, pick the media player to wrap, and choose which sources may fill
+it. Change the sources later from the integration's **Configure** button.
+
+## Adding a source
+
+1. Create `custom_components/media_metadata_filler/sources/<name>.py` with a
+   subclass of `MetadataSource` (see `sources/base.py`):
+   - `key`, `name`, `poll_interval`
+   - `match(media_content_id) -> lookup key | None`: cheap, no I/O
+   - `async_fetch(session, lookup_key) -> Metadata | None`
+2. Add it to `SOURCES` in `sources/__init__.py`. Order is match priority.
+3. Add tests under `tests/sources/`.
+
+`Metadata` fields left as `None` are taken from the wrapped player, so a
+source only needs to supply what's missing. Set `is_live=True` for live
+streams to drop duration and position.
+
+## Development
 
 ```sh
-uv sync
-cp config.example.toml config.toml   # edit it
-uv run hass-sonos-metadata-mux preview --player kitchen            # merged metadata now
-uv run hass-sonos-metadata-mux preview --player kitchen --watch 300
-uv run hass-sonos-metadata-mux bbc bbc_6music                      # BBC lookup only
-uv run hass-sonos-metadata-mux sonos-dump --player kitchen         # raw Sonos state
+uv sync              # installs Python 3.14 deps incl. pytest-homeassistant-custom-component
 uv run pytest
 ```
 

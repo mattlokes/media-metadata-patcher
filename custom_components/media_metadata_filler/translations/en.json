@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fill missing media metadata",
+        "description": "Creates a new media player that mirrors and controls the one you choose, filling in title, artist and artwork when a source recognises what it is playing.",
+        "data": {
+          "entity_id": "Media player",
+          "name": "Name",
+          "sources": "Metadata sources"
+        },
+        "data_description": {
+          "entity_id": "The media player to wrap. Its controls keep working through the new entity.",
+          "name": "Defaults to the media player's name followed by (filled).",
+          "sources": "Which sources may fill in metadata, tried in order."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "That media player is already wrapped."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "sources": "Metadata sources"
+        }
+      }
+    }
+  }
+}

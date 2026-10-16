@@ -1,25 +1,19 @@
 [project]
-name = "hass-sonos-metadata-mux"
+name = "media-metadata-filler"
 version = "0.1.0"
-description = "Expose a Sonos speaker to Home Assistant with BBC Sounds now-playing metadata filled in"
+description = "Home Assistant integration that fills missing now-playing metadata on any media player"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.12"
-dependencies = [
-    "soco[events-asyncio]==0.31.5",
-    "aiohttp>=3.9",
-    "aiomqtt>=2.3",
+requires-python = ">=3.14.2"
+
+# Development only: the integration itself ships as custom_components/media_metadata_filler.
+[dependency-groups]
+dev = [
+    "pytest-homeassistant-custom-component==0.13.367",
 ]
 
-[project.scripts]
-hass-sonos-metadata-mux = "hass_sonos_metadata_mux.__main__:main"
-
-[dependency-groups]
-dev = ["pytest>=8", "pytest-asyncio>=0.24"]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.uv]
+package = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
