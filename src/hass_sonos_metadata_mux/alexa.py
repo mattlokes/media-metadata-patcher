@@ -27,6 +27,8 @@ from alexapy import (
     TokenManager,
 )
 
+from yarl import URL
+
 from .config import APP_NAME
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,9 +68,38 @@ def save_credentials(path: Path, creds: DeviceCredentials) -> None:
     _write_private_json(path, creds.as_dict())
 
 
+_SIGNIN_HOST = "www.amazon.com"
+
+
+class _Enrollment(EnrollmentFlow):
+    """alexapy's EnrollmentFlow, but signing in where its legacy login does.
+
+    alexapy 1.31/1.32 builds `www.<domain>/ap/register`, which Amazon serves
+    as a 404 page. The long-standing alexapy login (used by alexa_media) signs
+    in at www.amazon.com/ap/signin for every marketplace and returns to
+    www.amazon.com/ap/maplanding; the code still registers at api.<domain>.
+    """
+
+    @property
+    def oauth_url(self) -> str:
+        query = dict(URL(super().oauth_url).query)
+        query["openid.return_to"] = f"https://{_SIGNIN_HOST}/ap/maplanding"
+        return str(URL(f"https://{_SIGNIN_HOST}/ap/signin").with_query(query))
+
+    def parse_redirect_url(self, pasted_url: str) -> str:
+        try:
+            url = URL(pasted_url.strip())
+        except (ValueError, TypeError):
+            return super().parse_redirect_url(pasted_url)
+        if url.host == _SIGNIN_HOST:
+            # The parent only accepts www.<domain>; the code itself is host-neutral.
+            url = url.with_host(f"www.{self.domain}")
+        return super().parse_redirect_url(str(url))
+
+
 def start_enrollment(domain: str, state_file: Path) -> str:
     """Begin enrollment; persist the PKCE state and return the login URL."""
-    flow = EnrollmentFlow(domain=domain)
+    flow = _Enrollment(domain=domain)
     _write_private_json(state_file, flow.to_state())
     return flow.oauth_url
 
@@ -83,7 +114,7 @@ async def finish_enrollment(
         raise RuntimeError(
             "No enrollment in progress; run `enroll` without --url first"
         ) from ex
-    flow = EnrollmentFlow.from_state(state)
+    flow = _Enrollment.from_state(state)
     code = flow.parse_redirect_url(pasted_url)
     async with aiohttp.ClientSession() as session:
         creds = await flow.async_register(session, code)

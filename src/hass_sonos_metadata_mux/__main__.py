@@ -68,9 +68,9 @@ async def cmd_enroll(cfg: Config, args: argparse.Namespace) -> None:
         print(
             "1. Open this URL in a browser and sign in to Amazon:\n\n"
             f"   {url}\n\n"
-            "2. After signing in you'll land on a page that may look blank or show an\n"
-            f"   error. Copy the full address from the address bar; it starts with\n"
-            f"   https://www.{cfg.alexa.domain}/ap/maplanding\n"
+            "2. After signing in you'll land on a page that may look blank or say\n"
+            '   "Looking for Something?". That is expected. Copy the full address from\n'
+            "   the address bar; it starts with https://www.amazon.com/ap/maplanding\n"
         )
         if not sys.stdin.isatty():
             print("Then run: enroll --url '<pasted address>'")
