@@ -72,6 +72,13 @@ uv sync              # installs Python 3.14 deps incl. pytest-homeassistant-cust
 uv run pytest
 ```
 
+The brand icon (`custom_components/media_metadata_patcher/brand/`) is generated
+by `scripts/brand_icon.py`:
+
+```sh
+uv run --no-project --with pillow python scripts/brand_icon.py
+```
+
 ## License
 
 MIT
