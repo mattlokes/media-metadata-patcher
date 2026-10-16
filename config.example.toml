@@ -1,8 +1,5 @@
 # Copy to config.toml and edit. Relative paths are resolved against this file.
 
-# Where Amazon credentials and alexapy's cookie jar are kept (created if missing).
-state_dir = ".state"
-
 [mqtt]
 host = "homeassistant.local"
 port = 1883
@@ -16,15 +13,11 @@ base_topic = "hass_sonos_metadata_mux"
 event_listener_port = 1400
 # advertise_ip = "192.168.1.50"     # set if this machine has several interfaces
 
-[alexa]
-domain = "amazon.co.uk"             # your Amazon marketplace, e.g. amazon.com, amazon.de
-poll_interval = 15                  # seconds; fallback when the push stream is down
+[bbc]
+poll_interval = 20                  # seconds between BBC now-playing checks
+image_size = "640x640"              # artwork size requested from the BBC image service
 
 [[player]]
 id = "kitchen"                      # lowercase letters, digits, _
 name = "Kitchen (muxed)"
 sonos_host = "192.168.1.60"         # or: sonos_name = "Kitchen"
-alexa_device = "Kitchen"            # name or serial from `alexa-devices`
-# Regexes for Sonos URIs that mean "Alexa is the source". The default matches
-# x-sonos-vli: URIs that aren't AirPlay or Spotify Connect.
-# alexa_uri_patterns = ['^x-sonos-vli:(?!.*,(?:airplay|spotify):)']

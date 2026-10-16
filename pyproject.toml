@@ -1,12 +1,11 @@
 [project]
 name = "hass-sonos-metadata-mux"
 version = "0.1.0"
-description = "Expose a Sonos speaker to Home Assistant with Alexa now-playing metadata muxed in"
+description = "Expose a Sonos speaker to Home Assistant with BBC Sounds now-playing metadata filled in"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
 dependencies = [
-    "alexapy==1.31.0",
     "soco[events-asyncio]==0.31.5",
     "aiohttp>=3.9",
     "aiomqtt>=2.3",

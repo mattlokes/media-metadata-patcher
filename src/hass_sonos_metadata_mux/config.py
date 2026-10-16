@@ -16,10 +16,6 @@ APP_NAME = "hass_sonos_metadata_mux"
 
 _ID_RE = re.compile(r"^[a-z0-9_]+$")
 
-# Sonos uses x-sonos-vli: ("voice line-in") URIs for AirPlay and Spotify Connect
-# as well as Alexa, so match vli URIs that are neither. Confirm against a real
-# Alexa dump (`sonos-dump`) and override per player if needed.
-DEFAULT_ALEXA_URI_PATTERNS = (r"^x-sonos-vli:(?!.*,(?:airplay|spotify):)",)
 
 
 class ConfigError(Exception):
@@ -43,9 +39,9 @@ class SonosConfig:
 
 
 @dataclass(frozen=True)
-class AlexaConfig:
-    domain: str = "amazon.com"
-    poll_interval: float = 15.0
+class BbcConfig:
+    poll_interval: float = 20.0
+    image_size: str = "640x640"
 
 
 @dataclass(frozen=True)
@@ -54,27 +50,14 @@ class PlayerConfig:
     name: str
     sonos_host: str | None = None
     sonos_name: str | None = None
-    alexa_device: str | None = None
-    alexa_uri_patterns: tuple[re.Pattern[str], ...] = tuple(
-        re.compile(p) for p in DEFAULT_ALEXA_URI_PATTERNS
-    )
 
 
 @dataclass(frozen=True)
 class Config:
-    state_dir: Path
     mqtt: MqttConfig | None
     sonos: SonosConfig
-    alexa: AlexaConfig
+    bbc: BbcConfig
     players: tuple[PlayerConfig, ...] = field(default_factory=tuple)
-
-    @property
-    def alexa_credentials_file(self) -> Path:
-        return self.state_dir / "alexa_credentials.json"
-
-    @property
-    def enroll_state_file(self) -> Path:
-        return self.state_dir / "enroll_state.json"
 
 
 def _resolve(base: Path, value: str) -> Path:
@@ -107,20 +90,11 @@ def _player(raw: dict[str, Any]) -> PlayerConfig:
         )
     if not (raw.get("sonos_host") or raw.get("sonos_name")):
         raise ConfigError(f"player {player_id!r} needs sonos_host or sonos_name")
-    try:
-        patterns = tuple(
-            re.compile(str(p))
-            for p in raw.get("alexa_uri_patterns", DEFAULT_ALEXA_URI_PATTERNS)
-        )
-    except re.error as ex:
-        raise ConfigError(f"player {player_id!r} has an invalid pattern: {ex}") from ex
     return PlayerConfig(
         id=player_id,
         name=str(raw.get("name", player_id)),
         sonos_host=raw.get("sonos_host"),
         sonos_name=raw.get("sonos_name"),
-        alexa_device=raw.get("alexa_device"),
-        alexa_uri_patterns=patterns,
     )
 
 
@@ -145,10 +119,10 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
         advertise_ip=sonos_raw.get("advertise_ip"),
     )
 
-    alexa_raw = data.get("alexa", {})
-    alexa = AlexaConfig(
-        domain=str(alexa_raw.get("domain", "amazon.com")),
-        poll_interval=float(alexa_raw.get("poll_interval", 15)),
+    bbc_raw = data.get("bbc", {})
+    bbc = BbcConfig(
+        poll_interval=float(bbc_raw.get("poll_interval", 20)),
+        image_size=str(bbc_raw.get("image_size", "640x640")),
     )
 
     players = tuple(_player(p) for p in data.get("player", []))
@@ -157,10 +131,9 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
         raise ConfigError("player ids must be unique")
 
     return Config(
-        state_dir=_resolve(base, data.get("state_dir", ".state")),
         mqtt=mqtt,
         sonos=sonos,
-        alexa=alexa,
+        bbc=bbc,
         players=players,
     )
 

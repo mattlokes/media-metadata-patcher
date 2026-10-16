@@ -1,0 +1,78 @@
+{
+ "$schema": "https://rms.api.bbc.co.uk/docs/swagger.json#/definitions/BroadcastsSummaryResponse",
+ "total": 21,
+ "limit": 5,
+ "offset": 0,
+ "data": [
+  {
+   "type": "broadcast_summary",
+   "id": "p0pb6353",
+   "urn": "urn:bbc:radio:episode:m0032hx5",
+   "start": "2026-10-16T15:00:00Z",
+   "end": "2026-10-16T18:00:00Z",
+   "service_id": "bbc_radio_two",
+   "duration": 10800,
+   "network": {
+    "id": "bbc_radio_two",
+    "key": "radio2",
+    "short_title": "Radio 2",
+    "logo_url": "https://sounds.files.bbci.co.uk/3.12.0/networks/bbc_radio_two/{type}_{size}.{format}",
+    "network_type": "master_brand"
+   },
+   "titles": {
+    "primary": "Radio 2 Drivetime",
+    "secondary": "All Request Friday",
+    "tertiary": ""
+   },
+   "synopses": {
+    "short": "Gary Davies is opening the phones for you to pick the tunes on All Request Friday.",
+    "medium": "Gary Davies is officially kicking off the weekend with your selection of songs on All Request Friday. Pick a tune by emailing drivetime@bbc.co.uk or call 08000 2 88 2 91!",
+    "long": "Gary Davies is officially kicking off the weekend with your selection of songs on All Request Friday. Pick a tune by emailing drivetime@bbc.co.uk or call 08000 2 88 2 91!\n\nProduced by BBC Audio for BBC Radio 2."
+   },
+   "image_url": "https://ichef.bbci.co.uk/images/ic/{recipe}/p0nph33g.jpg",
+   "container": {
+    "type": "brand",
+    "id": "m002y3hy",
+    "urn": "urn:bbc:radio:brand:m002y3hy",
+    "title": "Radio 2 Drivetime",
+    "activities": []
+   },
+   "playable_item": null
+  },
+  {
+   "type": "broadcast_summary",
+   "id": "p0pb6357",
+   "urn": "urn:bbc:radio:episode:m0032hx7",
+   "start": "2026-10-16T18:00:00Z",
+   "end": "2026-10-16T19:30:00Z",
+   "service_id": "bbc_radio_two",
+   "duration": 5400,
+   "network": {
+    "id": "bbc_radio_two",
+    "key": "radio2",
+    "short_title": "Radio 2",
+    "logo_url": "https://sounds.files.bbci.co.uk/3.12.0/networks/bbc_radio_two/{type}_{size}.{format}",
+    "network_type": "master_brand"
+   },
+   "titles": {
+    "primary": "Michelle Visage",
+    "secondary": "Party #215...I've had the time of my life and I owe it all to you...",
+    "tertiary": ""
+   },
+   "synopses": {
+    "short": "Have the time of your life at Michelle's Fabulous Friday party packed with party hits.",
+    "medium": "Have the time of your life at Michelle's Fabulous Friday party packed with party hits.",
+    "long": "Have the time of your life at Michelle's Fabulous Friday party packed with party hits. Here everyone is welcome, everyone is equal and everyone is a superstar. Expect to hear all your favourite disco, dance, pop and R&B bops hand-picked by Michelle.\n\nTo listen on most smart speakers, just 'ask BBC Sounds to play Michelle Visage.'\n\nProduced by Mostest for BBC Radio 2."
+   },
+   "image_url": "https://ichef.bbci.co.uk/images/ic/{recipe}/p0lxtl41.jpg",
+   "container": {
+    "type": "brand",
+    "id": "m001955m",
+    "urn": "urn:bbc:radio:brand:m001955m",
+    "title": "Michelle Visage",
+    "activities": []
+   },
+   "playable_item": null
+  }
+ ]
+}
