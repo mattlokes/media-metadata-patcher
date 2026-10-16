@@ -1,13 +1,13 @@
 {
   "domain": "media_metadata_patcher",
   "name": "Media Metadata Patcher",
-  "codeowners": [],
+  "codeowners": ["@mattlokes"],
   "config_flow": true,
   "dependencies": ["media_player"],
-  "documentation": "https://github.com/OWNER/media-metadata-patcher",
+  "documentation": "https://github.com/mattlokes/media-metadata-patcher",
   "integration_type": "helper",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/OWNER/media-metadata-patcher/issues",
+  "issue_tracker": "https://github.com/mattlokes/media-metadata-patcher/issues",
   "requirements": [],
   "version": "0.1.0"
 }
