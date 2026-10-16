@@ -93,13 +93,13 @@ async def cmd_alexa_devices(cfg: Config, args: argparse.Namespace) -> None:
     finally:
         await client.close()
     rows = sorted(devices, key=lambda d: d.name.casefold())
-    width = max((len(d.name) for d in rows), default=4)
-    print(f"{'NAME':<{width}}  {'SERIAL':<18}  {'TYPE':<16}  FAMILY  ONLINE")
-    for d in rows:
-        print(
-            f"{d.name:<{width}}  {d.device_serial_number:<18}  "
-            f"{d._device_type:<16}  {d.family}  {d.online}"
-        )
+    table = [("NAME", "SERIAL", "TYPE", "FAMILY", "ONLINE")] + [
+        (d.name, d.device_serial_number, d._device_type, d.family, str(d.online))
+        for d in rows
+    ]
+    widths = [max(len(row[i]) for row in table) for i in range(4)]
+    for row in table:
+        print("  ".join(c.ljust(w) for c, w in zip(row, widths)) + "  " + row[4])
 
 
 async def cmd_alexa_dump(cfg: Config, args: argparse.Namespace) -> None:
