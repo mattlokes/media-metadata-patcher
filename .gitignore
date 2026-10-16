@@ -13,6 +13,7 @@ config.toml
 *_credentials.json
 *token*
 *_pw
+*password*
 enroll_state.json
 
 # Raw, unscrubbed device dumps
