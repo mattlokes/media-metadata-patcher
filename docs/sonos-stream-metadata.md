@@ -122,7 +122,7 @@ track sequence:
 - **Status codes:** `ZPSTR_CONNECTING` / `ZPSTR_BUFFERING` are status codes,
   not track text.
 
-## What this means for the mux
+## What this means for the patcher
 
 - **Detecting BBC:** look for a BBC service ID in the track or media URI
   (`bbc.co.uk/mediaselector/…/vpid/<id>` or `bbci.co.uk/…/<id>.m3u8`).

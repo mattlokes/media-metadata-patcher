@@ -1454,7 +1454,7 @@ wheels = [
 ]
 
 [[package]]
-name = "media-metadata-filler"
+name = "media-metadata-patcher"
 version = "0.1.0"
 source = { virtual = "." }
 

@@ -1,6 +1,6 @@
 import pytest
 
-from custom_components.media_metadata_filler.sources import SOURCES, MetadataSource
+from custom_components.media_metadata_patcher.sources import SOURCES, MetadataSource
 
 
 def test_keys_are_unique_and_match_classes():

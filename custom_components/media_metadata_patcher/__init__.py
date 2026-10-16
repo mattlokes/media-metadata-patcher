@@ -1,4 +1,4 @@
-"""Media Metadata Filler: fill missing now-playing metadata on any media player."""
+"""Media Metadata Patcher: fill missing now-playing metadata on any media player."""
 
 from __future__ import annotations
 

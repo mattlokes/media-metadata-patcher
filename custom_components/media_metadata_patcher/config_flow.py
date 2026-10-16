@@ -40,7 +40,7 @@ def _sources_selector() -> SelectSelector:
     )
 
 
-class MetadataFillerConfigFlow(ConfigFlow, domain=DOMAIN):
+class MetadataPatcherConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
@@ -77,15 +77,15 @@ class MetadataFillerConfigFlow(ConfigFlow, domain=DOMAIN):
     def _default_name(self, entity_id: str) -> str:
         state = self.hass.states.get(entity_id)
         base = state.name if state else entity_id
-        return f"{base} (filled)"
+        return f"{base} (patched)"
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
-        return MetadataFillerOptionsFlow()
+        return MetadataPatcherOptionsFlow()
 
 
-class MetadataFillerOptionsFlow(OptionsFlow):
+class MetadataPatcherOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return self.async_create_entry(

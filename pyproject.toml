@@ -1,12 +1,12 @@
 [project]
-name = "media-metadata-filler"
+name = "media-metadata-patcher"
 version = "0.1.0"
 description = "Home Assistant integration that fills missing now-playing metadata on any media player"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.14.2"
 
-# Development only: the integration itself ships as custom_components/media_metadata_filler.
+# Development only: the integration itself ships as custom_components/media_metadata_patcher.
 [dependency-groups]
 dev = [
     "pytest-homeassistant-custom-component==0.13.367",

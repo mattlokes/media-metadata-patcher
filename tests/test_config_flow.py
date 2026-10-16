@@ -3,7 +3,7 @@ from homeassistant.const import CONF_ENTITY_ID, CONF_NAME
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.media_metadata_filler.const import CONF_SOURCES, DOMAIN
+from custom_components.media_metadata_patcher.const import CONF_SOURCES, DOMAIN
 
 
 async def test_user_flow_creates_entry(hass):
@@ -18,7 +18,7 @@ async def test_user_flow_creates_entry(hass):
         {CONF_ENTITY_ID: "media_player.kitchen", CONF_SOURCES: ["bbc_sounds"]},
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Kitchen (filled)"
+    assert result["title"] == "Kitchen (patched)"
     assert result["options"] == {
         CONF_ENTITY_ID: "media_player.kitchen",
         CONF_SOURCES: ["bbc_sounds"],
@@ -47,7 +47,7 @@ async def test_options_flow_changes_sources(hass):
     entry = MockConfigEntry(
         domain=DOMAIN,
         unique_id="media_player.kitchen",
-        title="Kitchen (filled)",
+        title="Kitchen (patched)",
         options={CONF_ENTITY_ID: "media_player.kitchen", CONF_SOURCES: ["bbc_sounds"]},
     )
     entry.add_to_hass(hass)

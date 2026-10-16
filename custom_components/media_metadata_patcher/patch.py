@@ -18,7 +18,7 @@ ACTIVE_STATES = frozenset({"playing", "paused", "buffering"})
 
 
 @dataclass(frozen=True)
-class FilledMedia:
+class PatchedMedia:
     title: str | None
     artist: str | None
     album: str | None
@@ -26,14 +26,14 @@ class FilledMedia:
     duration: float | None
     position: float | None
     position_updated_at: datetime | None
-    filled: bool
+    patched: bool
 
 
 def is_active(state: str | None) -> bool:
     return state in ACTIVE_STATES
 
 
-def fill(state: str | None, attrs: Mapping[str, Any], metadata: Metadata | None) -> FilledMedia:
+def patch_media(state: str | None, attrs: Mapping[str, Any], metadata: Metadata | None) -> PatchedMedia:
     """Return what the wrapper should show.
 
     With no metadata (no match, nothing fetched yet, or player not active) the
@@ -41,7 +41,7 @@ def fill(state: str | None, attrs: Mapping[str, Any], metadata: Metadata | None)
     `entity_picture`. Otherwise each non-None metadata field replaces the
     player's value, and live streams drop duration and position.
     """
-    own = FilledMedia(
+    own = PatchedMedia(
         title=attrs.get("media_title"),
         artist=attrs.get("media_artist"),
         album=attrs.get("media_album_name"),
@@ -49,11 +49,11 @@ def fill(state: str | None, attrs: Mapping[str, Any], metadata: Metadata | None)
         duration=attrs.get("media_duration"),
         position=attrs.get("media_position"),
         position_updated_at=attrs.get("media_position_updated_at"),
-        filled=False,
+        patched=False,
     )
     if metadata is None or not is_active(state):
         return own
-    return FilledMedia(
+    return PatchedMedia(
         title=metadata.title if metadata.title is not None else own.title,
         artist=metadata.artist if metadata.artist is not None else own.artist,
         album=metadata.album if metadata.album is not None else own.album,
@@ -61,5 +61,5 @@ def fill(state: str | None, attrs: Mapping[str, Any], metadata: Metadata | None)
         duration=None if metadata.is_live else own.duration,
         position=None if metadata.is_live else own.position,
         position_updated_at=None if metadata.is_live else own.position_updated_at,
-        filled=True,
+        patched=True,
     )

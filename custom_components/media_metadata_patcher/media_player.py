@@ -61,9 +61,9 @@ from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 
-from .const import ATTR_FILLED_BY, ATTR_WRAPPED_ENTITY_ID, CONF_SOURCES
+from .const import ATTR_PATCHED_BY, ATTR_WRAPPED_ENTITY_ID, CONF_SOURCES
 from .coordinator import SourceCoordinator, async_get_coordinator
-from .fill import FilledMedia, fill, is_active
+from .patch import PatchedMedia, is_active, patch_media
 from .sources import SOURCES, Metadata, MetadataSource
 
 
@@ -72,14 +72,14 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    async_add_entities([MetadataFillerPlayer(hass, entry)])
+    async_add_entities([MetadataPatcherPlayer(hass, entry)])
 
 
-class MetadataFillerPlayer(MediaPlayerEntity):
+class MetadataPatcherPlayer(MediaPlayerEntity):
     """Mirrors a wrapped media player; overlays source metadata when one matches."""
 
     _attr_should_poll = False
-    # Filled images are public URLs; pass-through images are the wrapped
+    # Patched images are public URLs; pass-through images are the wrapped
     # player's entity_picture, which HA has already proxied.
     _attr_media_image_remotely_accessible = True
 
@@ -96,7 +96,7 @@ class MetadataFillerPlayer(MediaPlayerEntity):
         self._match: tuple[MetadataSource, str] | None = None
         self._coordinator: SourceCoordinator | None = None
         self._unsub_coordinator: Callable[[], None] | None = None
-        self._filled = fill(None, {}, None)
+        self._patched = patch_media(None, {}, None)
 
     # --- state tracking -----------------------------------------------------
 
@@ -170,7 +170,7 @@ class MetadataFillerPlayer(MediaPlayerEntity):
         self._attr_shuffle = attrs.get("shuffle")
         self._attr_repeat = attrs.get("repeat")
         self._attr_group_members = attrs.get("group_members")
-        self._filled = fill(wrapped.state, attrs, self._metadata)
+        self._patched = patch_media(wrapped.state, attrs, self._metadata)
 
     @property
     def _metadata(self) -> Metadata | None:
@@ -187,43 +187,43 @@ class MetadataFillerPlayer(MediaPlayerEntity):
 
     @property
     def media_title(self) -> str | None:
-        return self._filled.title
+        return self._patched.title
 
     @property
     def media_artist(self) -> str | None:
-        return self._filled.artist
+        return self._patched.artist
 
     @property
     def media_album_name(self) -> str | None:
-        return self._filled.album
+        return self._patched.album
 
     @property
     def media_duration(self) -> int | None:
-        return self._filled.duration
+        return self._patched.duration
 
     @property
     def media_position(self) -> int | None:
-        return self._filled.position
+        return self._patched.position
 
     @property
     def media_position_updated_at(self):
-        return self._filled.position_updated_at
+        return self._patched.position_updated_at
 
     @property
     def media_image_url(self) -> str | None:
-        return self._filled.image_url if self._filled.filled else None
+        return self._patched.image_url if self._patched.patched else None
 
     @property
     def entity_picture(self) -> str | None:
         if self.state == MediaPlayerState.OFF:
             return None
-        return self._filled.image_url
+        return self._patched.image_url
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         return {
             ATTR_WRAPPED_ENTITY_ID: self._wrapped,
-            ATTR_FILLED_BY: self._match[0].key if self._match and self._filled.filled else None,
+            ATTR_PATCHED_BY: self._match[0].key if self._match and self._patched.patched else None,
         }
 
     # --- commands: forwarded to the wrapped player -----------------------

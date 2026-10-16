@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from custom_components.media_metadata_filler.sources.bbc import (
+from custom_components.media_metadata_patcher.sources.bbc import (
     BbcSoundsSource,
     Programme,
     Track,
