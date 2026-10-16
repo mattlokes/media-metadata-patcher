@@ -1,0 +1,27 @@
+[project]
+name = "hass-sonos-metadata-mux"
+version = "0.1.0"
+description = "Expose a Sonos speaker to Home Assistant with Alexa now-playing metadata muxed in"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = [
+    "alexapy==1.31.0",
+    "soco[events-asyncio]==0.31.5",
+    "aiohttp>=3.9",
+    "aiomqtt>=2.3",
+]
+
+[project.scripts]
+hass-sonos-metadata-mux = "hass_sonos_metadata_mux.__main__:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

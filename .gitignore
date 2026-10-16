@@ -1,0 +1,19 @@
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Local config and runtime state (never commit)
+config.toml
+.state/
+*_credentials.json
+*token*
+*_pw
+enroll_state.json
+
+# Raw, unscrubbed device dumps
+fixtures/raw/
